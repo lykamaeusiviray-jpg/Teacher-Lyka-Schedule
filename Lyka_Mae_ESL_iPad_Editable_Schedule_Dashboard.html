@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Lyka ESL">
+<title>Lyka Mae's ESL Dashboard</title>
+<style>
+:root{--green:#2f7d52;--light:#edf8f1;--soft:#dff1e5;--text:#24352b;--muted:#718078;--white:#fff;--line:#e4ece7}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f7faf8;color:var(--text)}
+button,input,select{font:inherit}.app{display:flex;min-height:100vh}.sidebar{width:230px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;position:fixed;height:100vh;z-index:5}
+.logo{font-size:20px;font-weight:800;color:var(--green);padding:8px 12px 25px}.logo small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:4px}
+.nav button{width:100%;border:0;background:none;text-align:left;padding:13px 14px;margin:3px 0;border-radius:12px;color:#5d6b63;font-size:14px;cursor:pointer}.nav button.active,.nav button:hover{background:var(--light);color:var(--green);font-weight:700}
+.main{margin-left:230px;padding:30px;max-width:1500px;width:100%}.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:15px}.header h1{margin:0;font-size:27px}.header p{margin:6px 0;color:var(--muted);font-size:14px}.date{background:var(--light);padding:10px 15px;border-radius:12px;color:var(--green);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.card{background:#fff;border:1px solid #e6eee9;border-radius:18px;padding:18px;box-shadow:0 4px 15px #214a3110}.stat .icon{font-size:21px}.stat h2{font-size:27px;margin:10px 0 2px}.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}.card h3{margin:0 0 15px;font-size:17px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px;align-items:center}.toolbar input,.toolbar select{max-width:190px}
+.add,.save,.btn{border:0;background:var(--green);color:white;border-radius:11px;padding:10px 13px;cursor:pointer;font-weight:700}.add:hover,.save:hover,.btn:hover{opacity:.9}.danger{background:#fff0f0!important;color:#b94a4a!important}
+input,select{width:100%;border:1px solid #dfe9e3;border-radius:9px;padding:8px;background:#fbfdfc;color:var(--text)}input:focus,select:focus{outline:2px solid var(--soft)}
+.page{display:none}.page.active{display:block}.notice{padding:10px 14px;background:var(--light);border-radius:10px;color:var(--green);font-size:12px;margin-bottom:15px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #edf1ee;vertical-align:middle}th{color:var(--muted);font-size:11px;text-transform:uppercase}
+.calendar-wrap{overflow:auto}.calendar{min-width:1050px;display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.dow{font-weight:800;color:var(--muted);font-size:12px;text-align:center;padding:8px}.cal-day{min-height:155px;background:#fbfdfc;border:1px solid #e6eee9;border-radius:12px;padding:8px;cursor:pointer}.cal-day:hover{border-color:#b9d9c6}.cal-day.today{box-shadow:inset 0 0 0 2px var(--green)}.cal-day.other{opacity:.42}.daynum{font-weight:800;font-size:13px;margin-bottom:6px;display:flex;justify-content:space-between}.count{font-size:10px;color:var(--muted);font-weight:600}.event{font-size:11px;padding:6px 7px;border-radius:8px;background:var(--light);margin:4px 0;line-height:1.25;overflow:hidden}.event strong{display:block}.event .pay{font-size:10px;color:var(--green);font-weight:700}.more{font-size:10px;color:var(--green);font-weight:700;padding:3px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.day{background:#f8fbf9;border-radius:12px;padding:12px;text-align:center}.day b{display:block;font-size:11px;color:var(--muted)}.day span{display:block;margin-top:9px;color:var(--green);font-weight:800;font-size:13px}
+.timeline{display:flex;gap:15px;align-items:center;padding:12px 0;border-bottom:1px solid #edf1ee}.timeline:last-child{border:0}.time{width:105px;font-weight:700}.student{flex:1}.student strong{display:block}.status{padding:5px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--light);color:var(--green)}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.mini{background:#f8fbf9;border-radius:12px;padding:12px}.mini b{font-size:20px;display:block}.mini span{font-size:11px;color:var(--muted)}
+.progressbar{height:7px;background:#e5eee8;border-radius:10px}.progressbar i{display:block;height:100%;background:var(--green);border-radius:10px}
+.modal{display:none;position:fixed;inset:0;background:#1c302855;z-index:20;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modalbox{background:white;border-radius:18px;width:min(560px,100%);padding:22px;max-height:90vh;overflow:auto}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px;font-weight:700}.full{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.notes{line-height:1.7;color:#5d6b63;font-size:13px}.quote{margin-top:16px;padding:15px;background:var(--light);border-radius:13px;color:var(--green);font-weight:700;text-align:center}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.sidebar{width:70px;padding:15px 8px}.logo{font-size:0;text-align:center}.logo:first-letter{font-size:25px}.logo small,.nav button span{display:none}.nav button{text-align:center}.main{margin-left:70px;padding:18px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+@media(max-width:600px){.stats{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.main{padding:12px}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}}
+
+/* iPad touch-first layout */
+html,body{-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+button,.btn,.add,.cal-day,.event{touch-action:manipulation}
+button{min-height:44px}
+input,select{min-height:44px;font-size:16px}
+@media(max-width:900px){
+ .sidebar{position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;height:auto;padding:6px 4px max(6px,env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);z-index:50}
+ .logo{display:none}.nav{display:grid;grid-template-columns:repeat(6,1fr);gap:2px}
+ .nav button{margin:0;padding:5px 1px;min-height:52px;text-align:center;font-size:18px}
+ .nav button span{display:block;font-size:9px;margin-top:2px}
+ .main{margin-left:0;padding:16px 12px 95px}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .grid{grid-template-columns:1fr}
+ .header h1{font-size:23px}
+ .toolbar .add,.toolbar .btn{flex:1}
+}
+@media(max-width:600px){
+ .stats{gap:8px}.card{padding:14px}.stat h2{font-size:22px}
+ .calendar{min-width:0!important;gap:3px}.dow{font-size:10px;padding:5px 1px}
+ .cal-day{min-height:105px;padding:5px;border-radius:8px}
+ .event{font-size:9px;padding:5px 4px;margin:3px 0}.event .pay{font-size:8px}
+ .event strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .calendar-wrap{overflow:visible}
+ .modal{padding:8px}.modalbox{width:100%;padding:16px;max-height:94vh}
+ table{display:block;overflow-x:auto;white-space:nowrap}
+}
+
+@media(min-width:601px){#studentCards{display:none}}
+@media(max-width:600px){.studentTable{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">🌱 <span>LYKA MAE</span><small>Private ESL Teacher</small></div>
+  <div class="nav">
+    <button class="active" onclick="showPage('dashboard',this)">🏠 <span>Dashboard</span></button>
+    <button onclick="showPage('schedule',this)">📅 <span>Monthly Schedule</span></button>
+    <button onclick="showPage('classes',this)">📚 <span>All Classes</span></button>
+    <button onclick="showPage('students',this)">👩‍🎓 <span>Students & Rates</span></button>
+    <button onclick="showPage('progress',this)">📈 <span>Progress</span></button>
+    <button onclick="showPage('notes',this)">📝 <span>Notes</span></button>
+  </div>
+</aside>
+
+<main class="main">
+<section id="dashboard" class="page active">
+  <div class="header"><div><h1>Good evening, Teacher Lyka! 🌿</h1><p>Your private ESL teaching overview.</p></div><div class="date" id="todayLabel"></div></div>
+  <div class="stats">
+    <div class="card stat"><div class="icon">📚</div><h2 id="monthClasses">0</h2><div class="muted">Classes this month</div></div>
+    <div class="card stat"><div class="icon">💰</div><h2 id="monthPay">₱0</h2><div class="muted">Monthly earnings</div></div>
+    <div class="card stat"><div class="icon">📅</div><h2 id="weekPay">₱0</h2><div class="muted">This week's earnings</div></div>
+    <div class="card stat"><div class="icon">🗓️</div><h2 id="todayCount">0</h2><div class="muted">Today's classes</div></div>
+    <div class="card stat"><div class="icon">👩‍🎓</div><h2 id="activeCount">0</h2><div class="muted">Active students</div></div>
+  </div>
+  <div class="grid">
+    <div class="card"><h3>Today's Classes</h3><div id="todayList"></div></div>
+    <div class="card"><h3>This Week</h3><div class="kpi"><div class="mini"><b id="weekClasses">0</b><span>classes</span></div><div class="mini"><b id="weekPay2">₱0</b><span>earnings</span></div><div class="mini"><b id="avgPay">₱0</b><span>average/class</span></div></div><div class="quote">Every 25-minute class counts. 🌱</div></div>
+  </div>
+  <div class="card" style="margin-top:18px"><h3>Monthly Calendar</h3><div class="calendar-wrap"><div class="calendar" id="dashCalendar"></div></div></div>
+   <div class="card" style="margin-top:18px"><h3>👩‍🎓 Student Names & Dates</h3><div class="notice">Student names from your Teacher Lyka schedule. Add the date/time in Monthly Schedule.</div><div id="nameDateList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px"></div></div>
+</section>
+
+<section id="schedule" class="page">
+  <div class="header"><div><h1>📅 Monthly Schedule</h1><p>Plot every 25-minute class and see your whole month at once.</p></div></div>
+  <div class="card">
+    <div class="toolbar">
+      <button class="btn" onclick="changeMonth(-1)">← Previous</button>
+      <button class="btn" onclick="goToday()">Today</button>
+      <button class="btn" onclick="changeMonth(1)">Next →</button>
+      <button class="add" onclick="openClassModal()">+ Add Class</button><a class="btn" href="https://docs.google.com/spreadsheets/d/1vHPCNXDqIT8vuLYvoC2DRTziDSqCqFg1/edit?gid=401341716#gid=401341716" target="_blank">📊 View Original Schedule</a>
+      <button class="btn" onclick="addRecurring()">🔁 Add Recurring</button>
+      <span id="calendarTitle" style="font-weight:800;margin-left:auto"></span>
+    </div>
+    <div class="notice">📱 <b>iPad:</b> tap a day to add a class, or tap an existing class to edit it. Each lesson is automatically treated as <b>25 minutes</b>. Example: 12:30 → 12:55. You can edit every class and payment.</div>
+    <div class="calendar-wrap"><div class="calendar" id="calendar"></div></div>
+  </div>
+</section>
+
+<section id="classes" class="page">
+  <div class="header"><div><h1>📚 All Classes</h1><p>See and edit every scheduled lesson and its payment.</p></div></div>
+  <div class="toolbar">
+    <button class="add" onclick="openClassModal()">+ Add Class</button>
+    <select id="classFilter" onchange="renderClasses()"><option value="all">All students</option></select>
+    <input id="classSearch" placeholder="Search student/date..." oninput="renderClasses()">
+  </div>
+  <div class="card"><table><thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Payment</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody id="classRows"></tbody></table></div>
+</section>
+
+<section id="students" class="page">
+  <div class="header"><div><h1>👩‍🎓 Students & Rates</h1><p>Set each student's payment per class.</p></div></div>
+  <div class="toolbar"><button class="add" onclick="addStudent()">+ Add Student</button><button class="btn" onclick="exportBackup()">⬇️ Backup</button><button class="btn" onclick="importBackup()">⬆️ Restore</button></div>
+  <div class="card"><div id="studentCards"></div><div class="studentTable"><table><thead><tr><th>Student</th><th>₱ / Class</th><th>Current Book</th><th>Progress %</th><th>Status</th><th></th></tr></thead><tbody id="studentRows"></tbody></table></div>
+</section>
+
+<section id="progress" class="page"><div class="header"><div><h1>📈 Progress</h1><p>Student learning progress.</p></div></div><div class="card"><div id="progressList"></div></div></section>
+<section id="notes" class="page"><div class="header"><div><h1>📝 Teacher Notes</h1><p>Keep your teaching reminders here.</p></div></div><div class="card notes"><h3 contenteditable="true">Teaching Reminders</h3><div contenteditable="true">• Take it slow when needed.<br>• Sometimes complete one book over two classes.<br>• Adjust lesson pace according to the student's level.<br>• Give positive feedback and encouragement.</div></div></section>
+</main>
+</div>
+
+<div class="modal" id="classModal">
+ <div class="modalbox">
+  <h2 id="modalTitle" style="margin-top:0">Add Class</h2>
+  <div class="formgrid">
+   <div class="field"><label>DATE</label><input type="date" id="fDate"></div>
+   <div class="field"><label>START TIME</label><input type="time" id="fTime" step="300"></div>
+   <div class="field"><label>STUDENT</label><select id="fStudent"></select></div>
+   <div class="field"><label>PAYMENT (₱)</label><input type="number" id="fPay" min="0" step="1"></div>
+   <div class="field"><label>TYPE</label><input id="fType" value="English Lesson"></div>
+   <div class="field"><label>STATUS</label><select id="fStatus"><option>Reserved</option><option>Completed</option><option>Cancelled</option><option>Rescheduled</option><option>Missed</option></select></div>
+  </div>
+  <div class="notice" style="margin-top:12px">End time: <b id="endPreview">—</b> (automatically 25 minutes after start)</div>
+  <div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="add" onclick="saveClass()">Save Class</button></div>
+ </div>
+</div>
+
+<script>
+const KEY='lyka_esl_dashboard_v3';
+const defaults={
+ students:[
+  {name:'Ethan',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Kyle',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Billsc',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Lucas2020CD',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Starry',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Potato',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Ellen and Kai',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Luke',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Lisa',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Una',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Anna',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Wicky Han',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Wu Zhi Yan',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Momo',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Rain',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Xin Yi',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Nouyi',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Luna',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Leo',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Candy',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Xuan Xuan',rate:0,book:'',progress:0,status:'Active'},
+  {name:'Bei Bei',rate:0,book:'',progress:0,status:'Active'},
+ ],
+ classes:[],
+ settings:{month:new Date().toISOString().slice(0,7)}
+};
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||structuredClone(defaults);
+if(data.students.length<=2 || data.students.some(s=>s.name==='Jake')){ data.students=structuredClone(defaults.students); data.classes=[]; }
+let viewDate=new Date(); viewDate.setDate(1); data.settings.month=currentMonthKey();
+let editingIndex=null;
+
+function save(){localStorage.setItem(KEY,JSON.stringify(data));updateAll()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function money(n){return '₱'+Number(n||0).toLocaleString('en-PH',{maximumFractionDigits:2})}
+function dateKey(d){return d.toISOString().slice(0,10)}
+function localDate(s){let p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}
+function endTime(start){
+ if(!start)return '';
+ let [h,m]=start.split(':').map(Number), total=h*60+m+25, hh=Math.floor(total/60)%24, mm=total%60;
+ return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')
+}
+function niceTime(t){
+ if(!t)return '';
+ let [h,m]=t.split(':').map(Number), ap=h>=12?'PM':'AM', hh=h%12||12;
+ return `${hh}:${String(m).padStart(2,'0')} ${ap}`
+}
+function niceDate(s){let d=localDate(s);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+function currentMonthKey(){return viewDate.getFullYear()+'-'+String(viewDate.getMonth()+1).padStart(2,'0')}
+function monthClasses(){let key=currentMonthKey();return data.classes.filter(c=>c.date.startsWith(key))}
+function weekRange(base=new Date()){
+ let d=new Date(base);d.setHours(0,0,0,0);let day=d.getDay();let start=new Date(d);start.setDate(d.getDate()-day);
+ let end=new Date(start);end.setDate(start.getDate()+6);return {start,end}
+}
+function inRange(c,start,end){let d=localDate(c.date);return d>=start&&d<=end}
+function stats(){
+ let mc=monthClasses(), now=new Date(), today=dateKey(now), wc=weekRange(now);
+ let tc=data.classes.filter(c=>c.date===today);
+ let wk=data.classes.filter(c=>inRange(c,wc.start,wc.end));
+ return {mc,tc,wk,mp:mc.reduce((a,c)=>a+Number(c.payment||0),0),wp:wk.reduce((a,c)=>a+Number(c.payment||0),0)}
+}
+function exportBackup(){
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Lyka_ESL_Backup.json';a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function importBackup(){
+ const input=document.createElement('input');input.type='file';input.accept='.json,application/json';
+ input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.students||!x.classes)throw new Error();
+ data=x;save();alert('Backup restored successfully.')}catch(e){alert('Invalid backup file.')}};
+ r.readAsText(f);
+ };input.click();
+}
+function autoCompleteFinishedClasses(){
+ let now=new Date(), changed=false;
+ data.classes.forEach(c=>{
+   if(c.status==='Reserved' && c.date && c.time){
+     let d=localDate(c.date); let [h,m]=c.time.split(':').map(Number); d.setHours(h,m,0,0); d.setMinutes(d.getMinutes()+25);
+     if(d<=now){c.status='Completed'; changed=true;}
+   }
+ });
+ if(changed)localStorage.setItem(KEY,JSON.stringify(data));
+}
+function updateAll(){autoCompleteFinishedClasses();renderDashboard();renderCalendar();renderClasses();renderStudents();renderProgress();updateStudentOptions();renderNameDates()}
+function renderNameDates(){const box=document.getElementById('nameDateList');if(!box)return;const key=currentMonthKey();box.innerHTML=data.students.map(n=>{let dates=data.classes.filter(c=>c.student===n.name&&c.date.startsWith(key)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));return `<div style=\"background:var(--light);border-radius:10px;padding:10px\"><b style=\"color:var(--green)\">${esc(n.name)}</b><div class=\"muted\" style=\"margin-top:5px\">${dates.length?dates.map(c=>niceDate(c.date)+' · '+niceTime(c.time)).join('<br>'):'Add date/time'}</div></div>`}).join('')}
+function renderDashboard(){
+ let s=stats();
+ document.getElementById('todayLabel').textContent=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+ document.getElementById('monthClasses').textContent=s.mc.length;
+ document.getElementById('monthPay').textContent=money(s.mp);
+ document.getElementById('weekPay').textContent=money(s.wp);
+ document.getElementById('weekPay2').textContent=money(s.wp);
+ document.getElementById('weekClasses').textContent=s.wk.length;
+ document.getElementById('avgPay').textContent=money(s.wk.length?s.wp/s.wk.length:0);
+ document.getElementById('todayCount').textContent=s.tc.length;
+ document.getElementById('activeCount').textContent=data.students.filter(x=>String(x.status).toLowerCase()==='active').length;
+ document.getElementById('todayList').innerHTML=s.tc.sort((a,b)=>a.time.localeCompare(b.time)).map((c,i)=>`
+  <div class="timeline"><div class="time">${niceTime(c.time)}–${niceTime(endTime(c.time))}</div><div class="student"><strong>${esc(c.student)}</strong><span class="muted">${esc(c.type)} · ${money(c.payment)}</span></div><span class="status">${esc(c.status)}</span></div>`).join('')||'<div class="muted">No classes scheduled today.</div>';
+ renderMiniCalendar('dashCalendar');
+}
+function calendarHTML(targetId){
+ let y=viewDate.getFullYear(),m=viewDate.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0);
+ let start=new Date(first);start.setDate(1-first.getDay());
+ let end=new Date(last);end.setDate(last.getDate()+(6-last.getDay()));
+ let out=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<div class="dow">${x}</div>`).join('');
+ for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){
+  let key=dateKey(d), sameMonth=d.getMonth()===m, today=key===dateKey(new Date());
+  let events=data.classes.filter(c=>c.date===key).sort((a,b)=>a.time.localeCompare(b.time));
+  let shown=events.slice(0,4).map(c=>`<div class="event" onclick="event.stopPropagation();openClassModal(${data.classes.indexOf(c)})"><strong>${niceTime(c.time)} · ${esc(c.student)}</strong><span class="pay">${money(c.payment)} · ${niceTime(endTime(c.time))}</span></div>`).join('');
+  if(events.length>4)shown+=`<div class="more">+ ${events.length-4} more</div>`;
+  out+=`<div class="cal-day ${sameMonth?'':'other'} ${today?'today':''}" onclick="openClassModalForDate('${key}')"><div class="daynum"><span>${d.getDate()}</span><span class="count">${events.length?events.length+' class'+(events.length>1?'es':''):''}</span></div>${shown}</div>`;
+ }
+ return out;
+}
+function renderCalendar(){document.getElementById('calendarTitle').textContent=viewDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});document.getElementById('calendar').innerHTML=calendarHTML('calendar')}
+function renderMiniCalendar(id){document.getElementById(id).innerHTML=calendarHTML(id)}
+function changeMonth(n){viewDate.setMonth(viewDate.getMonth()+n);renderCalendar();renderDashboard()}
+function goToday(){viewDate=new Date();viewDate.setDate(1);renderCalendar();renderDashboard()}
+function openClassModal(index=null){
+ editingIndex=index;
+ document.getElementById('modalTitle').textContent=index===null?'Add Class':'Edit Class';
+ let c=index===null?null:data.classes[index];
+ let now=new Date(), d=c?c.date:dateKey(viewDate.getFullYear()===now.getFullYear()&&viewDate.getMonth()===now.getMonth()?now:new Date(viewDate.getFullYear(),viewDate.getMonth(),1));
+ document.getElementById('fDate').value=d;
+ document.getElementById('fTime').value=c?.time||'12:30';
+ updateStudentOptions();
+ document.getElementById('fStudent').value=c?.student||data.students[0]?.name||'';
+ document.getElementById('fPay').value=c?.payment ?? (getStudentRate(document.getElementById('fStudent').value)||'');
+ document.getElementById('fType').value=c?.type||'English Lesson';
+ document.getElementById('fStatus').value=c?.status||'Reserved';
+ updateEndPreview();document.getElementById('classModal').classList.add('show');
+}
+function openClassModalForDate(date){openClassModal();document.getElementById('fDate').value=date}
+function closeModal(){document.getElementById('classModal').classList.remove('show');editingIndex=null}
+function getStudentRate(name){let s=data.students.find(x=>x.name===name);return s?s.rate:0}
+document.getElementById('fStudent').addEventListener('change',e=>{if(editingIndex===null||!document.getElementById('fPay').value)document.getElementById('fPay').value=getStudentRate(e.target.value);});
+document.getElementById('fTime').addEventListener('input',updateEndPreview);
+function updateEndPreview(){document.getElementById('endPreview').textContent=niceTime(endTime(document.getElementById('fTime').value))||'—'}
+function saveClass(){
+ let c={date:document.getElementById('fDate').value,time:document.getElementById('fTime').value,student:document.getElementById('fStudent').value,payment:Number(document.getElementById('fPay').value)||0,type:document.getElementById('fType').value,status:document.getElementById('fStatus').value};
+ if(!c.date||!c.time||!c.student){alert('Please fill in the date, time, and student.');return}
+ if(editingIndex===null)data.classes.push(c);else data.classes[editingIndex]=c;
+ viewDate=localDate(c.date);viewDate.setDate(1);closeModal();save();
+}
+function addRecurring(){
+ let name=prompt('Student name:',data.students[0]?.name||'Anna');if(!name)return;
+ let start=prompt('Start date (YYYY-MM-DD):',dateKey(new Date()));if(!start)return;
+ let weeks=Math.max(1,Math.min(52,Number(prompt('How many weeks?',4)||4)));
+ let time=prompt('Start time (24-hour, e.g. 12:30):','12:30');if(!time)return;
+ let days=prompt('Days (0=Sun, 1=Mon ... 6=Sat), comma-separated:','1,2,3,4,5');if(!days)return;
+ let pay=getStudentRate(name);let base=localDate(start), nums=days.split(',').map(x=>Number(x.trim())).filter(x=>x>=0&&x<=6);
+ for(let w=0;w<weeks;w++)for(let d of nums){let dt=new Date(base);dt.setDate(base.getDate()+w*7+(d-base.getDay()+7)%7);data.classes.push({date:dateKey(dt),time,student:name,payment:pay,type:'English Lesson',status:'Reserved'})}
+ save();alert(`Added ${weeks*nums.length} recurring classes.`);
+}
+function renderClasses(){
+ let sel=document.getElementById('classFilter'), old=sel.value;
+ sel.innerHTML='<option value="all">All students</option>'+data.students.map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');sel.value=data.students.some(s=>s.name===old)?old:'all';
+ let q=document.getElementById('classSearch').value.toLowerCase();
+ let arr=data.classes.map((c,i)=>({...c,_i:i})).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).filter(c=>(sel.value==='all'||c.student===sel.value)&&(!q||(c.student+' '+c.date+' '+c.type).toLowerCase().includes(q)));
+ document.getElementById('classRows').innerHTML=arr.length?arr.map(c=>`<tr><td><input type="date" value="${c.date}" onchange="editClass(${c._i},'date',this.value)"></td><td><input type="time" value="${c.time}" onchange="editClass(${c._i},'time',this.value)"><div class="muted">${niceTime(endTime(c.time))}</div></td><td><input value="${esc(c.student)}" onchange="editClass(${c._i},'student',this.value)"></td><td><input type="number" min="0" value="${c.payment}" onchange="editClass(${c._i},'payment',this.value)"></td><td><input value="${esc(c.type)}" onchange="editClass(${c._i},'type',this.value)"></td><td><select onchange="editClass(${c._i},'status',this.value)"><option ${c.status==='Reserved'?'selected':''}>Reserved</option><option ${c.status==='Completed'?'selected':''}>Completed</option><option ${c.status==='Cancelled'?'selected':''}>Cancelled</option><option ${c.status==='Rescheduled'?'selected':''}>Rescheduled</option><option ${c.status==='Missed'?'selected':''}>Missed</option></select></td><td><button class="btn danger" onclick="deleteClass(${c._i})">×</button></td></tr>`).join(''):'<tr><td colspan="7" class="muted">No classes found.</td></tr>';
+}
+function editClass(i,k,v){data.classes[i][k]=k==='payment'?Number(v)||0:v;save()}
+function deleteClass(i){if(confirm('Delete this class?')){data.classes.splice(i,1);save()}}
+function updateStudentOptions(){let sel=document.getElementById('fStudent');let current=sel.value;sel.innerHTML=data.students.map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');if(current&&data.students.some(s=>s.name===current))sel.value=current}
+function renderStudents(){
+ document.getElementById('studentCards').innerHTML=data.students.map((s,i)=>`
+ <div style="border:1px solid #e6eee9;border-radius:14px;padding:13px;margin-bottom:9px;background:#fbfdfc">
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+   <div><b style="font-size:17px">${esc(s.name)}</b><div class="muted">${esc(s.book)} · ${s.progress}% progress</div></div>
+   <b style="color:var(--green)">${money(s.rate)} / class</b>
+  </div>
+  <button class="btn" style="width:100%;margin-top:9px" onclick="editStudentMobile(${i})">✏️ Edit Student</button>
+ </div>`).join('');
+ document.getElementById('studentRows').innerHTML="" + data.students.map((s,i)=>`<tr><td><input value="${esc(s.name)}" onchange="editStudent(${i},'name',this.value)"></td><td><input type="number" min="0" value="${s.rate}" onchange="editStudent(${i},'rate',this.value)"></td><td><input value="${esc(s.book)}" onchange="editStudent(${i},'book',this.value)"></td><td><input type="number" min="0" max="100" value="${s.progress}" onchange="editStudent(${i},'progress',this.value)"></td><td><input value="${esc(s.status)}" onchange="editStudent(${i},'status',this.value)"></td><td><button class="btn danger" onclick="deleteStudent(${i})">×</button></td></tr>`).join('')}
+function editStudentMobile(i){
+ let s=data.students[i];
+ let v=prompt('Student name:',s.name); if(v===null)return; s.name=v.trim()||s.name;
+ v=prompt('Payment per 25-minute class (₱):',s.rate); if(v===null)return; s.rate=Number(v)||0;
+ v=prompt('Current book:',s.book); if(v===null)return; s.book=v||s.book;
+ v=prompt('Progress %:',s.progress); if(v===null)return; s.progress=Math.max(0,Math.min(100,Number(v)||0));
+ v=prompt('Status:',s.status); if(v===null)return; s.status=v||s.status;
+ save();
+}
+function editStudent(i,k,v){data.students[i][k]=['rate','progress'].includes(k)?Number(v)||0:v;save()}
+function addStudent(){data.students.push({name:'New Student',rate:95,book:'English Book',progress:0,status:'Active'});save()}
+function deleteStudent(i){if(confirm('Delete this student? Classes already scheduled for this student will remain.')){data.students.splice(i,1);save()}}
+function renderProgress(){document.getElementById('progressList').innerHTML=data.students.map(s=>`<div style="margin-bottom:16px"><b>${esc(s.name)}</b> <span class="muted">— ${s.progress}%</span><div class="progressbar" style="margin-top:7px"><i style="width:${Math.max(0,Math.min(100,s.progress))}%"></i></div></div>`).join('')||'<div class="muted">Add students to track progress.</div>'}
+function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');updateAll()}
+updateAll();
+setInterval(updateAll,30000);
+</script>
+</body>
+</html>
